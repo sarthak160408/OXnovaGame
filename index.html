@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OXnova - Smart AI Game</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background-size: 600% 600%;
+      animation: gradientBG 15s ease infinite;
+      color: white;
+      display: flex;
+      min-height: 100vh;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .sidebar {
+      width: 240px;
+      background: rgba(0,0,0,0.3);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      border-right: 2px solid #444;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: -240px;
+      transition: left 0.3s ease;
+      z-index: 999;
+    }
+    .sidebar.open { left: 0; }
+    .sidebar .close-btn {
+      background: #ff0055;
+      border: none;
+      color: white;
+      font-size: 18px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 4px;
+    }
+    .sidebar a, .sidebar button, .sidebar select {
+      background: #ff0055;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .sidebar a:hover, .sidebar button:hover { background: #ff3366; }
+    .main { margin-left: 0; padding: 20px; flex: 1; }
+    @media (min-width: 769px) { .main { margin-left: 260px; } }
+    h1 { font-size: 30px; color: #ffeb3b; }
+    .status, .score { margin: 10px 0; font-size: 18px; font-weight: bold; }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      max-width: 320px;
+      margin: 20px auto;
+    }
+    .cell {
+      aspect-ratio: 1;
+      background: #1e1e1e;
+      border-radius: 12px;
+      font-size: 2.5em;
+      font-weight: bold;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .cell.X { color: #03dac6; }
+    .cell.O { color: #ff4081; }
+    .cell:hover { background: #333; transform: scale(1.05); }
+    .win-cell {
+      background: #00c853 !important;
+      animation: blink 0.6s infinite alternate;
+    }
+    #page-container {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      display: none;
+    }
+    #page-container h2 { color: #ffeb3b; margin-bottom: 10px; }
+    .close-page-btn {
+      margin-top: 10px;
+      background: #ff0055;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    @keyframes blink {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+    .button-style {
+      margin-top:10px;
+      background:#ff0055;
+      color:white;
+      padding:10px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <button class="close-btn" onclick="toggleSidebar(true)">✖</button>
+    <button onclick="resetBoard()">🔁 New Game</button>
+    <label for="mode">Game Mode:</label>
+    <select id="mode" onchange="changeMode()">
+      <option value="ai">Play with AI</option>
+      <option value="2p">2 Player</option>
+    </select>
+    <label for="difficulty">AI Difficulty:</label>
+    <select id="difficulty" onchange="changeDifficulty()">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard" selected>Hard</option>
+    </select>
+    <a href="#" onclick="openPage('privacy')">🛡️ Privacy Policy</a>
+    <a href="#" onclick="openPage('contact')">📬 Contact Us</a>
+  </div>
+  <div class="main">
+    <h1>OXnova - Smart AI Game</h1>
+    <div class="status" id="status">Player X's turn</div>
+    <div class="board" id="board"></div>
+    <div class="score">X: <span id="scoreX">0</span> | O: <span id="scoreO">0</span></div>
+    <button class="button-style" onclick="clearScore()">🧹 Clear Score</button>
+    <div id="page-container"></div>
+    <button class="button-style" onclick="toggleSidebar()">☰ Menu</button>
+    <audio id="moveSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_b4c1b32844.mp3"></audio>
+    <audio id="winSound" src="https://cdn.pixabay.com/audio/2022/10/30/audio_0c17f15c02.mp3"></audio>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+      // JavaScript game logic will go here (omitted for brevity)
+    </script>
+    <!-- 🔸 Adsterra Ad Script Start -->
+    <div style="position:fixed; bottom:0; width:100%; text-align:center; z-index:9999;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '2fda4283b018f53f3538c93f5411586d',
+          'format' : 'iframe',
+          'height' : 50,
+          'width' : 320,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="//www.highperformanceformat.com/2fda4283b018f53f3538c93f5411586d/invoke.js"></script>
+    </div>
+    <!-- 🔸 Adsterra Ad Script End -->
+  </div>
+</body>
+</html>
