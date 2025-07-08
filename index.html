@@ -12,10 +12,10 @@
       background-size: 600% 600%;
       animation: gradientBG 15s ease infinite;
       color: white;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
       padding: 10px;
     }
     @keyframes gradientBG {
@@ -23,17 +23,20 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
     h1 {
       font-size: 8vw;
-      text-align: center;
       color: #ffeb3b;
       margin: 10px 0;
+      text-align: center;
       word-break: break-word;
     }
+
     .status, .score {
       font-size: 16px;
       margin: 5px 0;
     }
+
     .board {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -42,6 +45,7 @@
       max-width: 300px;
       margin: 10px auto;
     }
+
     .cell {
       width: 100%;
       aspect-ratio: 1;
@@ -55,6 +59,7 @@
       cursor: pointer;
       transition: 0.2s;
     }
+
     .cell.X { color: #03dac6; }
     .cell.O { color: #ff4081; }
     .cell:hover { background: #333; transform: scale(1.05); }
@@ -79,8 +84,73 @@
       color: white;
     }
 
-    select:focus, button:focus {
-      outline: none;
+    .menu-btn {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #ff0055;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 18px;
+      z-index: 9999;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 20px;
+      transition: 0.3s;
+      z-index: 999;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar button, .sidebar a, .sidebar select {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      background: #ff0055;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    #page-container {
+      margin-top: 10px;
+      padding: 15px;
+      max-width: 300px;
+      display: none;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+
+    #page-container h2 {
+      color: #ffeb3b;
+      margin-bottom: 8px;
+    }
+
+    .close-page-btn {
+      margin-top: 10px;
+      background: #ff0055;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
     }
 
     .ads {
@@ -89,11 +159,25 @@
   </style>
 </head>
 <body>
+
+  <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+
   <h1>OXnova</h1>
   <div class="status" id="status">Player X's turn</div>
   <div class="score">X: <span id="scoreX">0</span> | O: <span id="scoreO">0</span></div>
 
   <div class="controls">
+    <button onclick="resetBoard()">🔁 New Game</button>
+    <button onclick="clearScore()">🧹 Clear Score</button>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div id="page-container"></div>
+
+  <!-- Sidebar Menu -->
+  <div class="sidebar" id="sidebar">
+    <button onclick="toggleSidebar(true)">✖ Close</button>
     <select id="mode" onchange="changeMode()">
       <option value="ai">Play with AI</option>
       <option value="2p">2 Player</option>
@@ -103,12 +187,11 @@
       <option value="medium">Medium</option>
       <option value="hard" selected>Hard</option>
     </select>
-    <button onclick="resetBoard()">🔁 New Game</button>
-    <button onclick="clearScore()">🧹 Clear Score</button>
+    <a href="#" onclick="openPage('privacy')">🛡️ Privacy Policy</a>
+    <a href="#" onclick="openPage('contact')">📬 Contact Us</a>
   </div>
 
-  <div class="board" id="board"></div>
-
+  <!-- Sounds and Confetti -->
   <audio id="moveSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_b4c1b32844.mp3"></audio>
   <audio id="winSound" src="https://cdn.pixabay.com/audio/2022/10/30/audio_0c17f15c02.mp3"></audio>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -135,14 +218,25 @@
     let scores = { X: 0, O: 0 };
     let gameActive = true;
 
+    function toggleSidebar(forceClose = false) {
+      const sidebar = document.getElementById('sidebar');
+      if (forceClose) {
+        sidebar.classList.remove('open');
+      } else {
+        sidebar.classList.toggle('open');
+      }
+    }
+
     function changeMode() {
       aiEnabled = document.getElementById('mode').value === 'ai';
       resetBoard();
     }
+
     function changeDifficulty() {
       difficulty = document.getElementById('difficulty').value;
       resetBoard();
     }
+
     function handleMove(e) {
       const index = e.target.dataset.index;
       if (!gameActive || cells[index]) return;
@@ -156,6 +250,7 @@
         endGame(`${currentPlayer} wins!`);
         return;
       }
+
       if (!cells.includes('')) {
         endGame("It's a draw!");
         return;
@@ -165,9 +260,10 @@
       document.getElementById('status').innerText = `Player ${currentPlayer}'s turn`;
 
       if (aiEnabled && currentPlayer === 'O') {
-        setTimeout(() => aiMove(), 400);
+        setTimeout(() => aiMove(), 300);
       }
     }
+
     function aiMove() {
       const empty = cells.map((val, i) => val === '' ? i : null).filter(v => v !== null);
       let move = empty[0];
@@ -175,6 +271,7 @@
       if (difficulty === 'medium') {
         move = empty[Math.floor(Math.random() * empty.length)];
       }
+
       if (difficulty === 'hard') {
         move = getBestMove();
       }
@@ -182,6 +279,7 @@
       const cell = document.querySelector(`.cell[data-index='${move}']`);
       handleMove({ target: cell });
     }
+
     function getBestMove() {
       const winPatterns = [
         [0,1,2],[3,4,5],[6,7,8],
@@ -198,6 +296,7 @@
       }
       return cells.findIndex(c => c === '') ?? 0;
     }
+
     function checkWin(player) {
       const winPatterns = [
         [0,1,2],[3,4,5],[6,7,8],
@@ -206,6 +305,7 @@
       ];
       return winPatterns.some(p => p.every(i => cells[i] === player));
     }
+
     function endGame(message) {
       gameActive = false;
       document.getElementById('status').innerText = message;
@@ -215,6 +315,7 @@
       document.getElementById('scoreO').innerText = scores['O'];
       confetti();
     }
+
     function resetBoard() {
       cells = Array(9).fill('');
       currentPlayer = 'X';
@@ -230,17 +331,30 @@
         div.addEventListener('click', handleMove);
         board.appendChild(div);
       });
+      document.getElementById('page-container').style.display = 'none';
       if (aiEnabled && currentPlayer === 'O') {
         setTimeout(() => aiMove(), 400);
       }
     }
+
     function clearScore() {
       scores = { X: 0, O: 0 };
       document.getElementById('scoreX').innerText = '0';
       document.getElementById('scoreO').innerText = '0';
     }
 
+    function openPage(page) {
+      const container = document.getElementById('page-container');
+      container.style.display = 'block';
+      if (page === 'privacy') {
+        container.innerHTML = `<h2>Privacy Policy</h2><p>We do not collect any personal data. This game is fully offline and safe.</p><button class="close-page-btn" onclick="resetBoard()">Close</button>`;
+      } else if (page === 'contact') {
+        container.innerHTML = `<h2>Contact Us</h2><p>Email: <a href="mailto:sarthakjawalgaonkar@gmail.com" style="color:#03a9f4">sarthakjawalgaonkar@gmail.com</a></p><button class="close-page-btn" onclick="resetBoard()">Close</button>`;
+      }
+    }
+
     resetBoard();
   </script>
+
 </body>
-  </html>
+</html>
