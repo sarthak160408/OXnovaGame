@@ -316,10 +316,13 @@
       gameActive = false;
       document.getElementById('status').innerText = message;
       document.getElementById('winSound').play();
-      scores[currentPlayer]++;
-      document.getElementById('scoreX').innerText = scores['X'];
-      document.getElementById('scoreO').innerText = scores['O'];
-      confetti();
+
+      if (message.includes('wins')) {
+        scores[currentPlayer]++;
+        document.getElementById('scoreX').innerText = scores['X'];
+        document.getElementById('scoreO').innerText = scores['O'];
+        confetti();
+      }
     }
 
     function resetBoard() {
