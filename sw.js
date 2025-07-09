@@ -1,22 +1,23 @@
-self.addEventListener('install', function(e) {
-  e.waitUntil(
-    caches.open('oxnova-cache').then(function(cache) {
-      return cache.addAll([
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open('oxnova-cache').then(cache =>
+      cache.addAll([
         './',
         './index.html',
+        './styles.css',
+        './script.js',
         './manifest.json',
-        './sw.js',
         './icons/icon-192.png',
         './icons/icon-512.png'
-      ]);
-    })
+      ])
+    )
   );
 });
 
-self.addEventListener('fetch', function(e) {
-  e.respondWith(
-    caches.match(e.request).then(function(response) {
-      return response || fetch(e.request);
-    })
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(response =>
+      response || fetch(event.request)
+    )
   );
 });
