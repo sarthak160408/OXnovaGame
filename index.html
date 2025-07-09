@@ -2,263 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2b2b4b" />
   <title>OXnova - Smart AI Game</title>
+
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0f0c29" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      background-size: 600% 600%;
-      animation: gradientBG 15s ease infinite;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .menu-btn {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 40px;
-      height: 40px;
-      font-size: 22px;
-      background: #ff0055;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .sidebar {
-      width: 240px;
-      background: rgba(0,0,0,0.3);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      border-right: 2px solid #444;
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: -240px;
-      transition: left 0.3s ease;
-      z-index: 999;
-    }
-    .sidebar.open { left: 0; }
-    .sidebar .close-btn,
-    .sidebar button,
-    .sidebar a,
-    .sidebar select {
-      background: #ff0055;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-      margin-top: 60px;
-      text-align: center;
-    }
-    h1 { color: #ffeb3b; }
-    .status, .score {
-      margin-top: 10px;
-      font-size: 18px;
-    }
-    .board {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      max-width: 320px;
-      margin: 20px auto;
-    }
-    .cell {
-      aspect-ratio: 1;
-      background: #1e1e1e;
-      border-radius: 12px;
-      font-size: 2.5em;
-      font-weight: bold;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .cell.X { color: #03dac6; }
-    .cell.O { color: #ff4081; }
-    .win-cell { background: #00c853 !important; animation: blink 0.6s infinite alternate; }
-    .button-style {
-      background: #ff0055;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      border: none;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    #page-container {
-      margin-top: 20px;
-      padding: 15px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      display: none;
-    }
-    @keyframes blink {
-      from { transform: scale(1); }
-      to { transform: scale(1.1); }
-    }
-  </style>
+
+  <!-- Ad Script -->
+  <script type="text/javascript">
+    atOptions = {
+      'key' : '2fda4283b018f53f3538c93f5411586d',
+      'format' : 'iframe',
+      'height' : 50,
+      'width' : 320,
+      'params' : {}
+    };
+  </script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/2fda4283b018f53f3538c93f5411586d/invoke.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-  <div class="sidebar" id="sidebar">
-    <button class="close-btn" onclick="toggleSidebar(true)">✖ Close</button>
-    <button onclick="resetBoard()">🔁 New Game</button>
-    <label>Game Mode:</label>
-    <select id="mode" onchange="changeMode()">
-      <option value="ai">Play with AI</option>
-      <option value="2p">2 Player</option>
-    </select>
-    <label>AI Difficulty:</label>
-    <select id="difficulty" onchange="changeDifficulty()">
-      <option value="easy">Easy</option>
-      <option value="medium">Medium</option>
-      <option value="hard" selected>Hard</option>
-    </select>
-    <a href="#" onclick="openPage('privacy')">🛡️ Privacy Policy</a>
-    <a href="#" onclick="openPage('contact')">📬 Contact Us</a>
-  </div>
-
-  <div class="main">
+  <div class="container">
     <h1>OXnova - Smart AI Game</h1>
-    <div class="status" id="status">Player X's turn</div>
+    <p id="turn">Player X's turn</p>
+    <p>X: <span id="x-score">0</span> | O: <span id="o-score">0</span></p>
+
     <div class="board" id="board"></div>
-    <div class="score">X: <span id="scoreX">0</span> | O: <span id="scoreO">0</span></div>
-    <button class="button-style" onclick="clearScore()">🧹 Clear Score</button>
-    <div id="page-container"></div>
+
+    <button id="clear-score">🧹 Clear Score</button>
+    <button id="menu-button" class="menu-btn" 
+            style="position:absolute;top:10px;left:10px;font-size:14px;padding:4px 8px;">
+      ☰
+    </button>
   </div>
 
-  <!-- Sounds -->
-  <audio id="moveSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_b4c1b32844.mp3"></audio>
-  <audio id="winSound" src="https://cdn.pixabay.com/audio/2022/10/30/audio_0c17f15c02.mp3"></audio>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Ad container -->
+  <div id="ad-container" style="text-align: center; margin-top: 1rem;">
+    <div id="container-2fda4283b018f53f3538c93f5411586d"></div>
+  </div>
 
-  <!-- Game Logic -->
+  <!-- Service Worker registration -->
   <script>
-    let aiEnabled = true;
-    let difficulty = 'hard';
-    let currentPlayer = 'X';
-    let cells = Array(9).fill('');
-    let scores = { X: 0, O: 0 };
-    let gameActive = true;
-
-    function toggleSidebar(forceClose = false) {
-      const sidebar = document.getElementById('sidebar');
-      forceClose ? sidebar.classList.remove('open') : sidebar.classList.toggle('open');
-    }
-
-    function changeMode() {
-      aiEnabled = document.getElementById('mode').value === 'ai';
-      resetBoard();
-    }
-
-    function changeDifficulty() {
-      difficulty = document.getElementById('difficulty').value;
-      resetBoard();
-    }
-
-    function handleMove(e) {
-      const index = e.target.dataset.index;
-      if (!gameActive || cells[index]) return;
-      document.getElementById('moveSound').play();
-      cells[index] = currentPlayer;
-      e.target.innerText = currentPlayer;
-      e.target.classList.add(currentPlayer);
-      if (checkWin(currentPlayer)) return endGame(`${currentPlayer} wins!`);
-      if (!cells.includes('')) return document.getElementById('status').innerText = "It's a draw!";
-      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      document.getElementById('status').innerText = `Player ${currentPlayer}'s turn`;
-      if (aiEnabled && currentPlayer === 'O') setTimeout(aiMove, 300);
-    }
-
-    function aiMove() {
-      const empty = cells.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-      let move = difficulty === 'medium' ? empty[Math.floor(Math.random() * empty.length)] :
-                 difficulty === 'hard' ? getBestMove() : empty[0];
-      const cell = document.querySelector(`.cell[data-index='${move}']`);
-      handleMove({ target: cell });
-    }
-
-    function getBestMove() {
-      const winPatterns = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      const opponent = 'X';
-      for (let [a,b,c] of winPatterns) {
-        const values = [cells[a], cells[b], cells[c]];
-        if (values.filter(v => v === 'O').length === 2 && values.includes('')) return [a,b,c][values.indexOf('')];
-        if (values.filter(v => v === opponent).length === 2 && values.includes('')) return [a,b,c][values.indexOf('')];
+    if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log("✅ Service Worker registered", reg))
+          .catch(err => console.error("❌ Service Worker registration failed", err));
       }
-      return cells.findIndex(c => c === '');
+    } else {
+      console.warn("Service Worker not registered. Not a secure context.");
     }
-
-    function checkWin(player) {
-      return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(p => p.every(i => cells[i] === player));
-    }
-
-    function endGame(message) {
-      gameActive = false;
-      document.getElementById('status').innerText = message;
-      document.getElementById('winSound').play();
-      scores[currentPlayer]++;
-      document.getElementById('scoreX').innerText = scores['X'];
-      document.getElementById('scoreO').innerText = scores['O'];
-      confetti();
-    }
-
-    function resetBoard() {
-      cells = Array(9).fill('');
-      currentPlayer = 'X';
-      gameActive = true;
-      document.getElementById('status').innerText = `Player X's turn`;
-      const board = document.getElementById('board');
-      board.innerHTML = '';
-      cells.forEach((_, i) => {
-        const div = document.createElement('div');
-        div.className = 'cell';
-        div.dataset.index = i;
-        div.innerText = '';
-        div.addEventListener('click', handleMove);
-        board.appendChild(div);
-      });
-      document.getElementById('page-container').style.display = 'none';
-    }
-
-    function clearScore() {
-      scores = { X: 0, O: 0 };
-      document.getElementById('scoreX').innerText = '0';
-      document.getElementById('scoreO').innerText = '0';
-    }
-
-    function openPage(page) {
-      const container = document.getElementById('page-container');
-      container.style.display = 'block';
-      container.innerHTML = page === 'privacy' ?
-        `<h2>Privacy Policy</h2><p>No data is collected or stored.</p><button class='button-style' onclick='resetBoard()'>Close</button>` :
-        `<h2>Contact Us</h2><p>Email: <a href="mailto:sarthakjawalgaonkar@gmail.com">sarthakjawalgaonkar@gmail.com</a></p><button class='button-style' onclick='resetBoard()'>Close</button>`;
-    }
-
-    resetBoard();
   </script>
+
+  <!-- Game Script -->
+  <script src="script.js"></script>
 </body>
 </html>
