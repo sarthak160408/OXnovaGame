@@ -36,7 +36,7 @@
     }
     h1 {
       color: #ffeb3b;
-      margin-bottom: 0.5rem;
+      margin-top: 50px;
       text-align: center;
     }
     .board {
@@ -60,6 +60,7 @@
     .cell.X { color: #03dac6; }
     .cell.O { color: #ff4081; }
     .cell:hover { background: #333; }
+
     button {
       padding: 10px 16px;
       background: #ff0055;
@@ -71,24 +72,61 @@
       margin: 0.5rem;
     }
     button:hover { background: #ff3366; }
+
     #menu-button {
-      position: absolute;
+      position: fixed;
       top: 10px;
       left: 10px;
       font-size: 14px;
       padding: 4px 8px;
+      z-index: 1001;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -240px;
+      width: 240px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 20px;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar button, .sidebar a {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      background: #ff0055;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+  <button id="menu-button">☰</button>
+
+  <div class="sidebar" id="sidebar">
+    <button onclick="toggleSidebar()">✖ Close Menu</button>
+    <button onclick="resetBoard()">🔁 New Game</button>
+    <button onclick="clearScore()">🧹 Clear Score</button>
+  </div>
+
   <h1>OXnova - Smart AI Game</h1>
   <p id="turn">Player X's turn</p>
   <p>X: <span id="x-score">0</span> | O: <span id="o-score">0</span></p>
 
   <div class="board" id="board"></div>
-
-  <button id="clear-score">🧹 Clear Score</button>
-  <button id="menu-button">☰</button>
 
   <div id="ad-container" style="text-align: center; margin-top: 1rem;">
     <div id="container-2fda4283b018f53f3538c93f5411586d"></div>
@@ -158,12 +196,18 @@
       });
     }
 
-    document.getElementById('clear-score').addEventListener('click', () => {
+    function clearScore() {
       scores = { X: 0, O: 0 };
       document.getElementById('x-score').textContent = '0';
       document.getElementById('o-score').textContent = '0';
       resetBoard();
-    });
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    document.getElementById('menu-button').addEventListener('click', toggleSidebar);
 
     resetBoard();
   </script>
