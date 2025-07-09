@@ -1,7 +1,7 @@
 {
   "name": "OXnova - Smart AI Game",
   "short_name": "OXnova",
-  "description": "Play OXnova – the smartest offline AI-powered Tic Tac Toe game.",
+  "description": "Play OXnova – a smart offline AI-powered Tic Tac Toe game.",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0f0c29",
