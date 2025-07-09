@@ -89,14 +89,18 @@
       top: 10px;
       left: 10px;
       background: #ff0055;
-      padding: 4px 8px;
+      padding: 6px 10px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       color: white;
-      font-size: 14px;
+      font-size: 18px;
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      line-height: 1;
       z-index: 1000;
       cursor: pointer;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
     }
 
     .sidebar {
@@ -161,7 +165,7 @@
 </head>
 <body>
 
-  <!-- Menu Button in Top-Left -->
+  <!-- Menu Button -->
   <button class="menu-btn" onclick="toggleSidebar()">☰</button>
 
   <h1>OXnova</h1>
@@ -177,7 +181,7 @@
 
   <div id="page-container"></div>
 
-  <!-- Sidebar Menu -->
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <button onclick="toggleSidebar(true)">✖ Close</button>
     <select id="mode" onchange="changeMode()">
@@ -193,12 +197,11 @@
     <a href="#" onclick="openPage('contact')">📬 Contact Us</a>
   </div>
 
-  <!-- Sounds and Confetti -->
+  <!-- Sounds and Ads -->
   <audio id="moveSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_b4c1b32844.mp3"></audio>
   <audio id="winSound" src="https://cdn.pixabay.com/audio/2022/10/30/audio_0c17f15c02.mp3"></audio>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <!-- Adsterra Ad -->
   <div class="ads">
     <script type="text/javascript">
       atOptions = {
@@ -212,6 +215,7 @@
     <script type="text/javascript" src="//www.highperformanceformat.com/2fda4283b018f53f3538c93f5411586d/invoke.js"></script>
   </div>
 
+  <!-- Game Script -->
   <script>
     let aiEnabled = true;
     let difficulty = 'hard';
